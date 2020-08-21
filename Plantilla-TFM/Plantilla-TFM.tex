@@ -1,0 +1,614 @@
+%\title{Plantilla para Trabajo Fin de Máster, UNED}
+% Esta plantilla está basada en la Plantilla de Tesis de la Universidad de Bristol, UK. https://www.overleaf.com/latex/templates/university-of-bristol-thesis-template/kzqrfvyxxcdm#.VNS-e1WG-cg
+\RequirePackage[l2tabu]{nag}		% Warns for incorrect (obsolete) LaTeX usage
+%
+%
+% Memoir is a flexible class for typesetting poetry, fiction, 
+% non-fiction and mathematical works as books, reports, articles or
+% manuscripts. CTAN repository is found at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/memoir/
+% Memoir class loads useful packages by default (see manual).
+\documentclass[a4paper,11pt,leqno,openbib]{memoir} %add 'draft' to turn draft option on (see below)
+%
+%
+% Adding metadata:
+\usepackage{datetime}
+\usepackage{ifpdf}
+\ifpdf
+\pdfinfo{
+   /Author (Luc\'ia Tajuelo L\'opez)
+   /Title (Optimization and cooperation in vehicle routing problems)
+   /Keywords (Vehicle routing problem with time windows; swapping heuristic; randomized algorithms; Solomon benchmark; planning and scheduling of routes; game theory; cooperative games)
+   /CreationDate (D:\pdfdate)
+}
+\fi
+% When draft option is on. 
+\ifdraftdoc 
+	\usepackage{draftwatermark}				%Sets watermarks up.
+	\SetWatermarkScale{0.3}
+	\SetWatermarkText{\bf Draft: \today}
+\fi
+%
+% Declare figure/table as a subfloat.
+\newsubfloat{figure}
+\newsubfloat{table}
+% Better page layout for A4 paper, see memoir manual.
+\settrimmedsize{297mm}{210mm}{*}
+\setlength{\trimtop}{0pt} 
+\setlength{\trimedge}{\stockwidth} 
+\addtolength{\trimedge}{-\paperwidth} 
+\settypeblocksize{634pt}{448.13pt}{*} 
+\setulmargins{4cm}{*}{*} 
+\setlrmargins{*}{*}{1.5} 
+\setmarginnotes{17pt}{51pt}{\onelineskip} 
+\setheadfoot{\onelineskip}{2\onelineskip} 
+\setheaderspaces{*}{2\onelineskip}{*} 
+\checkandfixthelayout
+%
+\frenchspacing
+% Font with math support: New Century Schoolbook
+\usepackage{fouriernc}
+\usepackage[T1]{fontenc}
+%
+% UoB guidelines:
+%
+% Text should be in double or 1.5 line spacing, and font size should be
+% chosen to ensure clarity and legibility for the main text and for any
+% quotations and footnotes. Margins should allow for eventual hard binding.
+%
+% Note: This is automatically set by memoir class. Nevertheless \OnehalfSpacing 
+% enables double spacing but leaves single spaced for captions for instance. 
+\OnehalfSpacing 
+%
+% Sets numbering division level
+\setsecnumdepth{subsection} 
+\maxsecnumdepth{subsubsection}
+%
+% Chapter style (taken and slightly modified from Lars Madsen Memoir Chapter 
+% Styles document
+\usepackage{calc,soul,fourier}
+\makeatletter 
+\newlength\dlf@normtxtw 
+\setlength\dlf@normtxtw{\textwidth} 
+\newsavebox{\feline@chapter} 
+\newcommand\feline@chapter@marker[1][4cm]{%
+	\sbox\feline@chapter{% 
+		\resizebox{!}{#1}{\fboxsep=1pt%
+			\colorbox{gray}{\color{white}\thechapter}% 
+		}}%
+		\rotatebox{90}{% 
+			\resizebox{%
+				\heightof{\usebox{\feline@chapter}}+\depthof{\usebox{\feline@chapter}}}% 
+			{!}{\scshape\so\@chapapp}}\quad%
+		\raisebox{\depthof{\usebox{\feline@chapter}}}{\usebox{\feline@chapter}}%
+} 
+\newcommand\feline@chm[1][4cm]{%
+	\sbox\feline@chapter{\feline@chapter@marker[#1]}% 
+	\makebox[0pt][c]{% aka \rlap
+		\makebox[1cm][r]{\usebox\feline@chapter}%
+	}}
+\makechapterstyle{daleifmodif}{
+	\renewcommand\chapnamefont{\normalfont\Large\scshape\raggedleft\so} 
+	\renewcommand\chaptitlefont{\normalfont\Large\bfseries\scshape} 
+	\renewcommand\chapternamenum{} \renewcommand\printchaptername{} 
+	\renewcommand\printchapternum{\null\hfill\feline@chm[2.5cm]\par} 
+	\renewcommand\afterchapternum{\par\vskip\midchapskip} 
+	\renewcommand\printchaptertitle[1]{\color{gray}\chaptitlefont\raggedleft ##1\par}
+} 
+\makeatother 
+\chapterstyle{daleifmodif}
+%
+% UoB guidelines:
+%
+% The pages should be numbered consecutively at the bottom centre of the
+% page.
+\makepagestyle{myvf} 
+\makeoddfoot{myvf}{}{\thepage}{} 
+\makeevenfoot{myvf}{}{\thepage}{} 
+\makeheadrule{myvf}{\textwidth}{\normalrulethickness} 
+\makeevenhead{myvf}{\small\textsc{\leftmark}}{}{} 
+\makeoddhead{myvf}{}{}{\small\textsc{\rightmark}}
+\pagestyle{myvf}
+%
+% Oscar's command (it works):
+% Fills blank pages until next odd-numbered page. Used to emulate single-sided
+% frontmatter. This will work for title, abstract and declaration. Though the
+% contents sections will each start on an odd-numbered page they will
+% spill over onto the even-numbered pages if extending beyond one page
+% (hopefully, this is ok).
+\newcommand{\clearemptydoublepage}{\newpage{\thispagestyle{empty}\cleardoublepage}}
+%
+%
+% Creates indexes for Table of Contents, List of Figures, List of Tables and Index
+\makeindex
+% \printglossaries below creates a list of abbreviations. \gls and related
+% commands are then used throughout the text, so that latex can automatically
+% keep track of which abbreviations have already been defined in the text.
+%
+% The import command enables each chapter tex file to use relative paths when
+% accessing supplementary files. For example, to include
+% chapters/brewing/images/figure1.png from chapters/brewing/brewing.tex we can
+% use
+% \includegraphics{images/figure1}
+% instead of
+% \includegraphics{chapters/brewing/images/figure1}
+
+
+\makeatletter
+\newenvironment{breakablealgorithm}
+{% \begin{breakablealgorithm}
+	\begin{center}
+		\refstepcounter{algorithm}% New algorithm
+		\hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+		\renewcommand{\caption}[2][\relax]{% Make a new \caption
+			{\raggedright\textbf{\ALG@name~\thealgorithm} ##2\par}%
+			\ifx\relax##1\relax % #1 is \relax
+			\addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+			\else % #1 is not \relax
+			\addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+			\fi
+			\kern2pt\hrule\kern2pt
+		}
+	}{% \end{breakablealgorithm}
+		\kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+	\end{center}
+}
+\makeatother
+
+\usepackage{import}
+
+% Add other packages needed for chapters here. For example:
+\usepackage{lipsum}					%Needed to create dummy text
+\usepackage{amsfonts} 					%Calls Amer. Math. Soc. (AMS) fonts
+\usepackage[centertags]{amsmath}			%Writes maths centred down
+\usepackage{stmaryrd}					%New AMS symbols
+\usepackage{amssymb}					%Calls AMS symbols
+\usepackage{amsthm}					%Calls AMS theorem environment
+\usepackage{newlfont}					%Helpful package for fonts and symbols
+\usepackage{layouts}					%Layout diagrams
+\usepackage{graphicx}					%Calls figure environment
+\usepackage{longtable,rotating}			%Long tab environments including rotation. 
+\usepackage[latin1]{inputenc}			       %Needed to encode non-english characters 
+									%directly for mac
+\usepackage{colortbl}					%Makes coloured tables
+\usepackage{wasysym}					%More math symbols
+\usepackage{mathrsfs}					%Even more math symbols
+\usepackage{float}						%Helps to place figures, tables, etc. 
+\usepackage{verbatim}					%Permits pre-formated text insertion
+\usepackage{upgreek }					%Calls other kind of greek alphabet
+\usepackage{latexsym}					%Extra symbols
+\usepackage[square,numbers,
+		     sort&compress]{natbib}		%Calls bibliography commands 
+\usepackage{url}						%Supports url commands
+\usepackage{etex}						%eTeXÃ•s extended support for counters
+\usepackage{fixltx2e}					%Eliminates some in felicities of the 
+									%original LaTeX kernel
+\usepackage[spanish,es-lcroman]{babel}		%For languages characters and hyphenation
+\usepackage{color}                    				%Creates coloured text and background
+\usepackage[colorlinks=true,
+		     allcolors=black]{hyperref}              %Creates hyperlinks in cross references
+\hypersetup{colorlinks,linkcolor=,urlcolor=magenta}
+\usepackage{memhfixc}					%Must be used on memoir document 
+									%class after hyperref
+\usepackage{enumerate}					%For enumeration counter
+\usepackage{footnote}					%For footnotes
+\usepackage{microtype}					%Makes pdf look better.
+\usepackage{rotfloat}					%For rotating and float environments as tables, 
+									%figures, etc. 
+\usepackage{alltt}						%LaTeX commands are not disabled in 
+									%verbatim-like environment
+\usepackage[version=0.96]{pgf}			%PGF/TikZ is a tandem of languages for producing vector graphics from a 
+\usepackage{tikz}						%geometric/algebraic description.
+\usetikzlibrary{arrows,shapes,snakes,
+		       automata,backgrounds,
+		       petri,topaths}				%To use diverse features from tikz		
+
+%							
+%Reduce widows  (the last line of a paragraph at the start of a page) and orphans 
+% (the first line of paragraph at the end of a page)
+\widowpenalty=1000
+\clubpenalty=1000
+%
+% New command definitions for my thesis
+%
+\newcommand{\keywords}[1]{\par\noindent{\small{\bf Keywords:} #1}} %Defines keywords small section
+\newcommand{\parcial}[2]{\frac{\partial#1}{\partial#2}}                             %Defines a partial operator
+\newcommand{\vectorr}[1]{\mathbf{#1}}                                                        %Defines a bold vector
+\newcommand{\vecol}[2]{\left(                                                                         %Defines a column vector
+	\begin{array}{c} 
+		\displaystyle#1 \\
+		\displaystyle#2
+	\end{array}\right)}
+\newcommand{\mados}[4]{\left(                                                                       %Defines a 2x2 matrix
+	\begin{array}{cc}
+		\displaystyle#1 &\displaystyle #2 \\
+		\displaystyle#3 & \displaystyle#4
+	\end{array}\right)}
+\newcommand{\pgftextcircled}[1]{                                                                    %Defines encircled text
+    \setbox0=\hbox{#1}%
+    \dimen0\wd0%
+    \divide\dimen0 by 2%
+    \begin{tikzpicture}[baseline=(a.base)]%
+        \useasboundingbox (-\the\dimen0,0pt) rectangle (\the\dimen0,1pt);
+        \node[circle,draw,outer sep=0pt,inner sep=0.1ex] (a) {#1};
+    \end{tikzpicture}
+}
+
+%
+% My caption style
+\newcommand{\mycaption}[2][\@empty]{
+	\captionnamefont{\scshape} 
+	\changecaptionwidth
+	\captionwidth{0.9\linewidth}
+	\captiondelim{.\:} 
+	\indentcaption{0.75cm}
+	\captionstyle[\centering]{}
+	\setlength{\belowcaptionskip}{10pt}
+	\ifx \@empty#1 \caption{#2}\else \caption[#1]{#2}
+}
+%
+% My subcaption style
+\newcommand{\mysubcaption}[2][\@empty]{
+	\subcaptionsize{\small}
+	\hangsubcaption
+	\subcaptionlabelfont{\rmfamily}
+	\sidecapstyle{\raggedright}
+	\setlength{\belowcaptionskip}{10pt}
+	\ifx \@empty#1 \subcaption{#2}\else \subcaption[#1]{#2}
+}
+%
+%An initial of the very first character of the content
+\usepackage{lettrine}
+\newcommand{\initial}[1]{%
+	\lettrine[lines=3,lhang=0.33,nindent=0em]{
+		\color{gray}
+     		{\textsc{#1}}}{}}
+%
+% Theorem styles used in my thesis
+%
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[chapter]
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposicion}[chapter]
+\theoremstyle{plain}
+\theoremstyle{definition}
+\newtheorem{dfn}{Definicion}[chapter]
+\theoremstyle{plain}
+\newtheorem{lemma}{Lema}[chapter]
+\theoremstyle{plain}
+\newtheorem{corollary}{Corolario}[chapter]
+\theoremstyle{plain}
+\newtheorem{result}{Resultado}[chapter]
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{axiom}{Axiom}[chapter]
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{textcomp}
+
+\usepackage{xfrac} % fraccion en diagional
+% f\newenvironment{steps}[1]{\begin{enumerate}[label=#1 \arabic*]}{\end{enumerate}}
+
+% f\def\step{%
+% f	\@ifnextchar[ \@step{\@noitemargtrue\@step[\@itemlabel]}}
+% f\def\@step[#1]{\item[#1]\mbox{}}
+% f\makeatother
+
+\usepackage{framed}
+
+\usepackage{enumitem}
+
+\newenvironment{steps}[1]{\begin{enumerate}[label=#1 \arabic*]}{\end{enumerate}}
+
+\makeatletter% 
+\def\step{%
+	\@ifnextchar[ \@step{\@noitemargtrue\@step[\@itemlabel]}}
+\def\@step[#1]{\item[#1]\mbox{}}
+\makeatother
+
+\newenvironment{rcases}
+{\left.\begin{aligned}}
+	{\end{aligned}\right\rbrace}
+\usepackage{graphicx}
+
+%
+%
+\begin{document}
+% UoB guidlines:
+%
+% Preliminary pages
+% 
+% The five preliminary pages must be the Title Page, Abstract, Dedication
+% and Acknowledgements, Author's Declaration and Table of Contents.
+% These should be single-sided.
+% 
+% Table of contents, list of tables and illustrative material
+% 
+% The table of contents must list, with page numbers, all chapters,
+ % sections and subsections, the list of references, bibliography, list of
+% abbreviations and appendices. The list of tables and illustrations
+% should follow the table of contents, listing with page numbers the
+% tables, photographs, diagrams, etc., in the order in which they appear
+% in the text.
+% 
+\frontmatter
+\pagenumbering{roman}
+%
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\begin{titlingpage}
+\begin{SingleSpace}
+\calccentering{\unitlength} 
+\begin{adjustwidth*}{\unitlength}{-\unitlength}
+\vspace*{13mm}
+\begin{center}
+\rule[0.5ex]{\linewidth}{2pt}\vspace*{-\baselineskip}\vspace*{3.2pt}
+\rule[0.5ex]{\linewidth}{1pt}\\[\baselineskip]
+{\HUGE Optimization and cooperation in vehicle routing problems }\\[4mm]
+% {\Large \textit{Subtítulo si existe}}\\
+\rule[0.5ex]{\linewidth}{1pt}\vspace*{-\baselineskip}\vspace{3.2pt}
+\rule[0.5ex]{\linewidth}{2pt}\\
+\vspace{6.5mm}
+{\large escrito por}\\
+\vspace{6.5mm}
+{\large\textsc{Luc\'ia Tajuelo L\'opez}}\\
+\vspace{11mm}
+{\large Tutor: Balbina Virginia Casas M\'endez}\\
+\vspace{11mm}
+\includegraphics[width= 3.5cm]{img/uned-logo.jpg}\\
+\vspace{6mm}
+{\large Facultad de Ciencias\\[1mm]
+\textsc{Universidad Nacional de Educaci\'on a Distancia}}\\
+\vspace{11mm}
+\begin{minipage}{11cm}
+\centering Trabajo presentado para la obtenci\'on del t\'itulo de\\ M\'aster Universitario en Matem\'aticas Avanzadas de la UNED. \\  Especialidad en Estad\'istica e Investigaci\'on Operativa.
+\end{minipage}\\
+\vspace{12mm}
+{\large\textsc{September 2020}}
+\vspace{12mm}
+\end{center}
+\begin{flushright}
+%{\small Word count: ten thousand and four}
+\end{flushright}
+\end{adjustwidth*}
+\end{SingleSpace}
+\end{titlingpage}
+%\clearemptydoublepage
+%
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+\chapter*{Abstract}
+\begin{SingleSpace}
+	\noindent \textbf{Abstract en español}:
+	
+	El problema de enrutamiento de vehículos con ventanas temporales es un problema que ha sido muy estudiado en las últimas décadas. Este trabajo fin de máster propone una metaheurística que combina un algoritmo aleatorizado de movimientos 2-opt junto con algoritmo de intercambios para este problema de transporte. La metaherística se ha probado bajo un benchmark teórico y ha sido adaptado para resolver un problema real de una cooperativa agricultural. Por otra parte, el trabajo revisa la literatura sobre cooperación y reglas de reparto de costes como el valor de Shapley, el valor de Aumann-Dr\`eze, método de beneficio equitativo y el reparto de Lorenz. Finalmente estos resultados se aplican para repartir los costes del benchmark teórico.
+\end{SingleSpace}
+\vspace{2cm}
+
+\begin{SingleSpace}
+	\noindent \textbf{Abstract in English}:
+	The vehicle routing problem with time windows is a hard combinatorial optimization problem that has received considerable attention in the last decades. This Master Thesis proposes a metaheuristic which combines a randomized 2-optimization insertion and swapping algorithm for this transportation problem. The metaheuristic has been tested under a theoretical benchmark and it has been adapted to solve a real agricultural problem which aims to minimise its transportation costs. Furthermore, it reviews literature about cooperation and cost allocation rules such as Shapley value, Aumann-Dr\`eze value, Equal profit method (EPM) and Lorenz allocation. Finally, some of these results are applied to the theoretical benchmark to allocate its costs among its customers.
+\end{SingleSpace}
+
+\vfill
+\keywords{Vehicle routing problem with time windows; insertion and swapping heuristics; randomized algorithms; Solomon benchmark; planning and scheduling of routes; clustering; cooperation games; cost allication; Shapley; Aumann-Dr\`eze; Equal profit method; Lorenz;
+}
+%\clearpage
+%\clearemptydoublepage
+%
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+%\chapter*{Dedicatoria y agradecimientos}
+%\begin{SingleSpace}
+%\initial{A} León Werth. \\ \\ \\ ...
+
+%Corrijo, por consiguiente, mi dedicatoria:\\ \\
+%A León Werth cuando era niño.\\ \\
+%(El principito, de Antoine de Saint Exupery)
+%\end{SingleSpace}
+
+%\vspace{2.5cm}
+
+
+\clearpage
+%\clearemptydoublepage
+
+%
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+\renewcommand{\contentsname}{Tabla de Contenidos}
+\maxtocdepth{subsection}
+\tableofcontents*
+\addtocontents{toc}{\par\nobreak \mbox{}\hfill{\bf Página}\par\nobreak}
+\clearpage
+%\clearemptydoublepage
+%
+\listoftables
+\addtocontents{lot}{\par\nobreak\textbf{{\scshape Tabla} \hfill Página}\par\nobreak}
+\clearpage
+%\clearemptydoublepage
+%
+\listoffigures
+\addtocontents{lof}{\par\nobreak\textbf{{\scshape Figura} \hfill Página}\par\nobreak}
+\clearpage
+%\clearemptydoublepage
+%
+%
+% The bulk of the document is delegated to these chapter files in
+% subdirectories.
+\mainmatter
+%
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+\let\textcircled=\pgftextcircled
+\chapter{Introduction}
+\label{chap:intro}
+\input{Introduccion.tex}
+
+\chapter{Block I: vehicle routing problem with time windows}
+\label{chap:blockI}
+\input{blockI.tex}
+
+\chapter{Block II: cooperative game theory}
+\label{chap:blockII}
+\input{blockII.tex}
+
+
+%=========================================================
+%
+%----------------------------------------------------------------------------------------
+%	THESIS CONCLUSIONS
+%----------------------------------------------------------------------------------------
+%
+% And the conclusions goes here
+\chapter{Conclusiones}\label{chap:Conclusion}
+
+\initial{T}his Master thesis proposes a metaheuristic which combines three local searches and a random sampling for the vehicle routing problem with capacity and time window constraints. Experimental results demonstrate its effectiveness, which matches 10 the 56 best published solutions to the Solomon benchmarks. It also gives good results to a real agricultural cooperative problem. The thesis also includes a robustness analysis which has shown the good metaheuristic's behavior.
+
+The main cooperative game theory results are described as well as some of the best known allocation rules such as Shapley value, Aumann-Dr\`eze value, Equal profit method and Lorenz allocation. Cooperative routing problem is also introduced, focusing on the most common techniques to allocate its costs. Finally, two collaborative routing problem data sets are selected to be solved. This work allocated the cost using allocating rules, which turned out the different allocation rules behavior.
+
+To sum up, this Master Thesis deals with the vehicle routing problem with time windows and its cost allocation.
+
+
+%
+% Apparently the guidelines don't say anything about citations or
+% bibliography styles so I guess we can use anything.
+\backmatter
+
+
+%=========================================================
+%
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+%
+% And the appendix goes here
+\appendix
+\chapter{Apéndice A}
+\label{app:app01}
+
+\initial{A}quí empezaría el primer apéndice si es que es necesario.
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\begin{thebibliography}{99}  % Un ejemplo de cómo poner las referencias de forma manual. Para manejar muchas referencias no dudar en usar BibTeX
+	%% \bibitem must have the following form:+
+	\bibitem{ambro} Ambrosino, D., \& Sciomachen, A. (2007). A food distribution network problem: a case study. IMA Journal of Management Mathematics, 18(1), 33-53.
+	
+	\bibitem{Arin} Arin Aguirre, F. J. (2003). Egalitarian distributions in coalitional models: The Lorenz criterion.
+	
+	\bibitem{Aumann} Aumann, R. J., \& Dreze, J. H. (1974). Cooperative games with coalition structures. International Journal of game theory, 3(4), 217-237.
+	
+	\bibitem{Agarwal} Agarwal, R., \& Ergun, Ö. (2010). Network design and allocation mechanisms for carrier alliances in liner shipping. Operations research, 58(6), 1726-1742.
+	
+	\bibitem{Backer} De Backer, B., Furnon, V., Shaw, P., Kilby, P. \& Prosser, P. (2000). Solving vehicle routing problems using constraint programming and metaheuristics. Journal of Heuristics, 6(4), 501-523.
+	
+	\bibitem{Berger} Berger, J., Barkaoui, M. \& Br\"aysy, O. (2001). A parallel hybrid genetic algorithm for the vehicle routing problem with time windows. Working paper, Defense Research Establishment Valcartier.
+	
+	\bibitem{bra} Br\"aysy, O. \& Gendreau, M. (2001). Route construction and local search algorithms for the vehicle routing problem with time windows. Sintef Report, STF42 A, 1024.
+	
+	\bibitem{bra2} Br\"aysy, O. (2001). Local search and variable neighborhood search algorithms for the vehicle routing problem with time windows. Vaasan yliopisto.
+	
+	\bibitem{Bent} Bent, R. \& Van Hentenryck, P. (2004). A two-stage hybrid local search for the vehicle routing problem with time windows. Transportation Science, 38(4), 515-530.
+	
+	\bibitem{Chiang} Chiang, W. C. \& Russell, R. A. (1996). Simulated annealing metaheuristics for the vehicle routing problem with time windows. Annals of Operations Research, 63(1), 3-27.
+	
+	\bibitem{Chiang2} Chiang, W. C. \& Russell, R. A. (1997). A reactive tabu search metaheuristic for the vehicle routing problem with time windows. INFORMS Journal on computing, 9(4), 417-430.
+	
+	\bibitem{Clark} Clarke, G. \& Wright, J. W. (1964). Scheduling of vehicles from a central depot to a number of delivery points. Operations research, 12(4), 568-581.
+	
+	\bibitem{Czech} Czech, Z. J. \& Czarnas, P. (2002, January). Parallel simulated annealing for the vehicle routing problem with time windows. In euromicro-pdp (p. 0376). IEEE.
+	
+	\bibitem{Cordeau} Cordeau, J. F., Laporte, G. \& Mercier, A. (2001). A unified tabu search heuristic for vehicle routing problems with time windows. Journal of the Operational research society, 52(8), 928-936.
+	
+	\bibitem{Ballot} Ballot, E., \& Fontane, F. (2010). Reducing transportation CO2 emissions through pooling of supply networks: perspectives from a case study in French retail chains. Production Planning \& Control, 21(6), 640-650.
+	
+	%de Frutos, R. M. G. \& Casas-M\'endez, B. V. (2016). A hybrid heuristic algorithm with application to a graphical interface for vehicle routing optimization in an agricultural cooperative. arXiv preprint arXiv:1607.02377.
+	
+	
+	\bibitem{Dantzig} Dantzig, G. B., \& Ramser, J. H. (1959). The truck dispatching problem. Management science, 6(1), 80-91.
+	
+	% Agnieszka Debudaj-Grabysz, Zbigniew J.Czech and Piotr Czarnas Silesia, 2004. University of Technology and University of Wroclaw, Poland.
+	
+	\bibitem{Fisher} Fisher, M. L., Jörnsten, K. O. \& Madsen, O. B. (1997). Vehicle routing with time windows: Two optimization algorithms. Operations research, 45(3), 488-492.
+	
+	\bibitem{Frisk} Frisk, M., Göthe-Lundgren, M., Jörnsten, K., \& Rönnqvist, M. (2010). Cost allocation in collaborative forest transportation. European Journal of Operational Research, 205(2), 448-458.
+	
+	\bibitem{Gambardella} Gambardella, L. M., Taillard, \'E. \& Agazzi, G. (1999). Macs-vrptw: A multiple colony system for vehicle routing problems with time windows. In New ideas in optimization.
+	
+	\bibitem{Gansterer} Gansterer, M., \& Hartl, R. F. (2018). Collaborative vehicle routing: a survey. European Journal of Operational Research, 268(1), 1-12.
+	
+	\bibitem{Golden } Golden, B. L., \& Assad, A. A. (1986). Vehicle routing with time-window constraints: Algorithmic solutions (Vol. 15). Amer Sciences Press.
+	% Golden is not used
+	
+	\bibitem{Balbina} Roque M. Guiti\'an de Frutos, Balbina V. Casas-M \'endez, (2016). (To appear). Routing problems in agricultural cooperatives: A model for optimization of transport vehicle logistics IMA Journal of Management Mathematics. DOI:10.1093/imaman/dpy010.
+	
+	
+	\bibitem{Harsanyi} Harsanyi, J. C. (1966). A general theory of rational behavior in game situations. Econometrica: Journal of the Econometric Society, 613-634.
+	\bibitem{Helsgaun} Helsgaun, K., (1998). An Effective Implementation of the Lin-Kernighan Traveling Salesman Heuristic. Datalogiske Skrifter (Writings on Computer Science), No. 81.
+	
+	\bibitem{Homberger} Homberger, J. (2000). Eine verteilt-parallele Metaheuristik. In Verteilt-parallele Metaheuristiken zur Tourenplanung (pp. 139-165). Deutscher Universit\"atsverlag, Wiesbaden.
+	% Golden is not used
+	\bibitem{Gehring} Homberger, J. \& Gehring, H. (1999). Two evolutionary metaheuristics for the vehicle routing problem with time windows. INFOR: Information Systems and Operational Research, 37(3), 297-318.
+	
+	\bibitem{Kimms} Kimms, A., \& Kozeletskyi, I. (2016). Shapley value-based cost allocation in the cooperative traveling salesman problem under rolling horizon planning. EURO Journal on Transportation and Logistics, 5(4), 371-392.
+	
+	% T. Ibaraki, M. Kubo, T. Masuda, T. Uno and M. Yagiura, 2001. "Effective Local Search Algorithms for the Vehicle Routing Problem with General Time Windows," Working Paper, Department of Applied Mathematics and Physics, Kyoto University, Japan.
+	
+	\bibitem{Juan} Juan, A. A., Faulin, J., Ruiz, R., Barrios, B., Gilibert, M. \& Vilajosana, X. (2009). Using oriented random search to provide a set of alternative solutions to the capacitated vehicle routing problem. In Operations research and cyber-infrastructure (pp. 331-345). Springer, Boston, MA.
+	
+	\bibitem{Lenstra} Lenstra, J. K. \& Kan, A. R. (1981). Complexity of vehicle routing and scheduling problems. Networks, 11(2), 221-227.
+	
+	\bibitem{cluster} MacQueen, J. (1967, June). Some methods for classification and analysis of multivariate observations. In Proceedings of the fifth Berkeley symposium on mathematical statistics and probability (Vol. 1, No. 14, pp. 281-297).
+	
+	\bibitem{bra3} Mester, D., Br\"aysy, O. \& Dullaert, W. (2007). A multi-parametric evolution strategies algorithm for vehicle routing problems. Expert Systems with Applications, 32(2), 508-517.
+	
+	% \bibitem{Li-Lim} Li, H., Lim, A. \& Huang, J. (2001). Local Search with Annealing-like Restarts to Solve the VRPTW. Working Paper, Department of Computer Science, National University of Singapore.
+	
+	\bibitem{L-K} Lin, S., Kernighan, B. W. (1973). An Effective Heuristic Algorithm for the Traveling-Salesman Problem. Operations research. 21, 498-516.
+	
+	\bibitem{Neumann} Neumann, J. O. H. N., \& Morgenstern, O. S. K. A. R. (1944). Theory of Games and Economic Behaviour Princeton Univ. Press, Princeton.
+	\bibitem{Potvin1996} Potvin, J. Y. \& Bengio, S. (1996). The vehicle routing problem with time windows part II: genetic search. INFORMS journal on Computing, 8(2), 165-172.
+	
+	\bibitem{Rousseau} Rousseau, L. M., Gendreau, M. \& Pesant, G. (2002). Using constraint-based operators to solve the vehicle routing problem with time windows. Journal of heuristics, 8(1), 43-58.
+	
+	%  S. Ropke,  D.Pisinger. "A general heuristic for vehicle routing problems",  technical report, Department of Computer Science, University of Copenhagen.
+	
+	\bibitem{Rochat} Rochat, Y. \& Taillard, \'E. D. (1995). Probabilistic diversification and intensification in local search for vehicle routing. Journal of heuristics, 1(1), 147-167.
+	
+	% Hasle G., O. Kloster, 2007. "Industrial Vehicle Routing Problems". Chapter in Hasle G., K-A Lie, E. Quak (eds): Geometric Modelling, Numerical Simulation, and Optimization. ISBN 978-3-540-68782-5, Springer.
+	
+	%  G. Schrimpf, J. Schneider, H. Stamm-Wilbrandt and G. Dueck, 2000. "Record Breaking Optimization Results Using the Ruin and Recreate Principle," Journal of Computational Physics 159, 139-171.
+	\bibitem{Schmeidler} Schmeidler, D. (1969). The nucleolus of a characteristic function game. SIAM Journal on applied mathematics, 17(6), 1163-1170.
+	
+	\bibitem{Shapley} Shapley, L. S. (1953). A value for n-person games. Contributions to the Theory of Games, 2(28), 307-317.
+	
+	\bibitem{Shaw1} Shaw, P. (1997). A new local search algorithm providing high quality solutions to vehicle routing problems. APES Group, Dept of Computer Science, University of Strathclyde, Glasgow, Scotland, UK.
+	
+	\bibitem{Shaw2} Shaw, P. (1998, October). Using constraint programming and local search methods to solve vehicle routing problems. In International conference on principles and practice of constraint programming (pp. 417-431). Springer, Berlin, Heidelberg.
+	
+	\bibitem{Solomon_1987} Solomon, M. M. (1987). Algorithms for the vehicle routing and scheduling problems with time window constraints. Operations research, 35(2), 254-265.
+	
+	
+	\bibitem{Taillard} Taillard, E., Badeau, P., Gendreau, M., Geurtin, F. \& Potvin, J.Y., (1997). A Tabu Search Heuristic for the Vehicle Routing Problem with Time Windows," Transportation Science, 31, 170-186.
+	
+	\bibitem{Woch} Woch, M. \& \L{}ebkowski, P. (2009). Sequential simulated annealing for the vehicle routing problem with time windows. Decision Making in Manufacturing and Services, 3(1-2), 87-100.
+	
+	\bibitem{Zon} van Zon, M. A., \& van den Heuvel, W. (2017). Cost allocation in cooperative transport: The joint network vehicle routing game.
+	
+\end{thebibliography}
+
+%
+% Add index
+%\printindex
+%   
+\end{document}
