@@ -9,6 +9,7 @@ import os as os
 import time as time 
 
 import src.read as read
+import numpy as np
 
 def power_set(List):
     return [tuple(j) for i in range(len(List)) for j in combinations(List, i+1)]
@@ -175,36 +176,18 @@ l_solution_route=[[0,90, 53, 66, 56,0], [0,63, 62, 67, 84, 51, 85, 91,0],\
     [0,69, 88, 78, 73, 60, 0],\
     [0,2, 45, 5, 7, 79, 55, 68,0]]
 
-t0 = time.time()
-HOLA = main(file_name, l_solution_route, 'Lorenz')
-t1 = time.time()
-t1 -t0
+t0_Lorenz = time.time()
+d_Lorenz = main(file_name, l_solution_route, 'Lorenz')
+t1_Lorenz = time.time()
+t1_Lorenz -t0_Lorenz
 
-t00 = time.time()
-HOLA1 = main(file_name, l_solution_route, 'EPM')
-t11 = time.time()
-t11 -t00
+t0_EPM = time.time()
+d_EPM_value = main(file_name, l_solution_route, 'EPM')
+t_EPM = time.time()
+t_EPM -t0_EPM
 
-t000 = time.time()
-HOLA2 = main(file_name, l_solution_route, 'Shapley')
-t111 = time.time()
-t111 -t000
+t0_shapley = time.time()
+d_shapley_value = main(file_name, l_solution_route, 'Shapley')
+t1_shapley = time.time()
+t1_shapley -t0_shapley
 
-import numpy as np
-
-np.std(list(HOLA.values()))
-max(list(HOLA.values()))
-min(list(HOLA.values()))
-
-
-np.std(list(HOLA1.values()))
-max(list(HOLA1.values()))
-min(list(HOLA1.values()))
-
-
-
-HOLA
-for ii in range(1,len(HOLA1)+1, 4):
-    print(' & '.join([ str(i) + ' & ' + str(round(HOLA1[i], 2)) for i in range(ii, ii + 4)] ))
-
-    
